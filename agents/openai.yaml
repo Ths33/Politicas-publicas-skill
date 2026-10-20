@@ -1,0 +1,4 @@
+interface:
+  display_name: "Observatório de Políticas Públicas"
+  short_description: "Pesquisa política brasileira com fontes oficiais e gráficos"
+  default_prompt: "Investigue políticas públicas brasileiras com dados oficiais, gráficos e análise de competências institucionais."
