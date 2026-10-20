@@ -1,0 +1,46 @@
+name: Import original Skill
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/import-skill.yml'
+permissions:
+  contents: write
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Skill repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Checkout website source
+        uses: actions/checkout@v4
+        with:
+          repository: Ths33/Observatorio-de-politicas-publicas
+          path: website-source
+          persist-credentials: false
+      - name: Extract and validate original Skill archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s website-source/public/skill.zip
+          unzip -t website-source/public/skill.zip
+          unzip -q website-source/public/skill.zip -d /tmp/observatorio-import
+          test -f /tmp/observatorio-import/observatorio-politicas-publicas/SKILL.md
+          test -f /tmp/observatorio-import/observatorio-politicas-publicas/agents/openai.yaml
+          test -f /tmp/observatorio-import/observatorio-politicas-publicas/references/fontes.md
+          cp -a /tmp/observatorio-import/observatorio-politicas-publicas/. .
+          rm -rf website-source
+          test "$(find references -maxdepth 1 -type f | wc -l)" -ge 9
+      - name: Commit Skill source files
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add SKILL.md agents/ references/
+          if ! git diff --cached --quiet; then
+            git commit -m "feat: import original Skill and 10 reference documents"
+            git push
+          fi
