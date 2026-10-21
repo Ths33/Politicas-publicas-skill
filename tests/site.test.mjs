@@ -1,0 +1,2 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {readFileSync} from 'node:fs';
+test('editorial source links and accessible structure',()=>{const page=readFileSync('src/pages/index.astro','utf8');const data=readFileSync('src/data/chapters.ts','utf8');assert.match(page,/Pular para o conteúdo/);assert.match(page,/aria-live/);assert.match(page,/prefers-reduced-motion/);assert.match(data,/sidra.ibge.gov.br/);assert.match(data,/bcb.gov.br/)});
